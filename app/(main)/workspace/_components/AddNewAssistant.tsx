@@ -29,6 +29,7 @@ import { api } from '@/convex/_generated/api';
 import { AuthContext } from '@/context/AuthContext';
 import { AssistantContext } from '@/context/AssistantContext';
 import { Loader2Icon } from 'lucide-react';
+import { DialogClose } from '@radix-ui/react-dialog';
 
 const DEFAULT_ASSISTANT = {
     image: '/bug-fixer.avif',
@@ -113,15 +114,18 @@ function AddNewAssistant({ children }: any) {
                                 <div className='flex gap-5'>
                                     <div>
                                         {selectedAssistant && (
-                                            <AssistantAvatar selectedImage={(v:any) => onHandleInputChange('image', v)}>
-                                                <Image 
-                                                    src={selectedAssistant.image || '/default-image.png'} 
-                                                    alt='Assistant' 
-                                                    width={150} 
-                                                    height={150} 
-                                                    className='w-[100px] h-[100px] rounded-xl cursor-pointer object-cover'
-                                                />
-                                            </AssistantAvatar>
+                                            <AssistantAvatar 
+                                            selectedImage={(v: string) => onHandleInputChange('image', v)}
+                                        >
+                                            <Image 
+                                                src={selectedAssistant.image || '/default-image.png'} 
+                                                alt='Assistant' 
+                                                width={150} 
+                                                height={150} 
+                                                className='w-[100px] h-[100px] rounded-xl cursor-pointer object-cover'
+                                            />
+                                        </AssistantAvatar>
+                                        
                                         )}
                                     </div>
                                     <div className='flex flex-col gap-3 w-full'>
@@ -182,7 +186,10 @@ function AddNewAssistant({ children }: any) {
 
                                 {/* Action Buttons */}
                                 <div className="flex gap-5 justify-end mt-10">
+                                    <DialogClose>
                                     <Button variant="outline">Cancel</Button>
+                                    </DialogClose>
+                                    
                                     <Button onClick={onSave} disabled={loading}>{loading&&<Loader2Icon className='animate-spin'/>}Add</Button>
                                 </div>
                             </div>

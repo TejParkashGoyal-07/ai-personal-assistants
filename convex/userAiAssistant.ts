@@ -26,7 +26,7 @@ export const GetAllUsersAssistants = query({
     },
     handler: async (ctx, args) => {
         const result = await ctx.db.query('userAiAssistant')
-            .filter(q => q.eq(q.field('uid'), args.uid))
+            .filter(q => q.eq(q.field('uid'), args.uid)).order('desc')
             .collect();
         return result; // ✅ Added return statement
     }
