@@ -9,6 +9,7 @@ import { ASSISTANT } from '../../ai-assistants/page'
 import AiAssistantsList from '@/services/AiAssistantsList'
 import Image from 'next/image'
 import { AssistantContext } from '@/context/AssistantContext'
+import AddNewAssistant from './AddNewAssistant'
 
 function AssistantList() {
     const { user } = useContext(AuthContext);
@@ -36,7 +37,9 @@ function AssistantList() {
         <div className='p-5 bg-secondary border-r-[1px] h-screen'>
             <h2 className='font-bold text-lg'>Your Personal AI Assistants</h2>
 
+            <AddNewAssistant>
             <Button className='w-full mt-3'>+ Add New Assistant</Button>
+            </AddNewAssistant>
             <Input className='bg-white mt-3' placeholder='Search' />
             
             <div className='mt-5'>

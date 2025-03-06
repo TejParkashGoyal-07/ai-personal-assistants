@@ -43,7 +43,8 @@ function ChatUi() {
         try {
             const result = await axios.post('/api/eden-ai-model', {
                 provider: AiModel?.edenAi,
-                userInput: userInput
+                userInput: userInput,
+                aiResp:messages[messages?.length-1]?.content
             });
             setMessages(prev=>prev.slice(0,-1))
             setMessages((prev) => [...prev, result.data]);
@@ -58,7 +59,9 @@ function ChatUi() {
             chatRef.current.scrollTop=chatRef.current.scrollHeight
         }
     },[messages])
-
+    useEffect(()=>{
+        setMessages([]);
+    },[assistant?.id])
     return (
         <div className="mt-20 p-6 relative h-[88vh]">
             {messages.length === 0 && <EmptyChatState />}

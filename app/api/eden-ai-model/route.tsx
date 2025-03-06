@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     // Parse JSON from the request body
-    const { provider, userInput } = await req.json();
+    const { provider, aiResp,userInput } = await req.json();
 
     // Set API request headers and URL
     const headers = {
@@ -27,6 +27,17 @@ export async function POST(req: NextRequest) {
             },
           ],
         },
+        ...(aiResp&&{
+            role: "assistant",
+            content: [
+              {
+                type: "text",
+                content: {
+                  text: aiResp, // Use userInput instead of hardcoded "HEY"
+                },
+              },
+            ],
+          }),
       ],
     });
 
@@ -47,7 +58,7 @@ export async function POST(req: NextRequest) {
     console.log(result);
     const resp={
         role:'Assistant',
-        content:result[provider].generate_text
+        content:result[provider]?.generate_text
     }
     // Return the result as JSON
     return NextResponse.json(resp, { status: 200 });
