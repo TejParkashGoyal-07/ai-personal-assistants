@@ -11,45 +11,67 @@ import Image from 'next/image'
 import { AssistantContext } from '@/context/AssistantContext'
 
 function AssistantList() {
-    const{user}=useContext(AuthContext)
-    const convex=useConvex();
-    const[assitantList,setAssistantList]=useState<ASSISTANT[]>([])
-    const{assistant,setAssistant}=useContext(AssistantContext)
-    useEffect(()=>{user&&GetUserAssistants()},[user&&assistant==null])
-    const GetUserAssistants=async()=>{
-        const result=await convex.query(api.userAiAssistant.GetAllUsersAssistants,{uid:user?._id});
-        console.log(result)
-        setAssistantList(result:ASSISTANT([]))
-      }
-  return (
-    <div className='p-5 bg-secondary border-r-[1px] h-screen'>
-        <h2 className='font-bold text-lg'>Your Personal AI Assistants</h2>
+    const { user } = useContext(AuthContext);
+    const convex = useConvex();
+    const [assistantList, setAssistantList] = useState<ASSISTANT[]>([]);
+    const { assistant, setAssistant } = useContext(AssistantContext);
 
-        <Button className='w-full mt-3'>+Add New Assistant</Button>
-        <Input className='bg-white mt-3' placeholder='Search'/>
-        <div className='mt-5'>
-            {assitantList.map((assistant,index)=>(
-                <div className='p-2  cursor-pointer flex gap-3 items-center hover:bg-gray-200 rounded-xl' key={index}>
-                    <Image className="rounded-lg w-[60px] h-[60px]  object-cover"  src={assistant.image} alt={assistant.name} width={60} height={60}
-                    />
-                    <div >
-                        <h2 className='font-bold'>{assistant.name}</h2>
-                        <h2 className='text-gray-600 dark:text-gray text-sm'>{assistant.title}</h2>
+    useEffect(() => {
+        if (user) {
+            GetUserAssistants();
+        }
+    }, [user, assistant]);
+
+    const GetUserAssistants = async () => {
+        try {
+            const result = await convex.query(api.userAiAssistant.GetAllUsersAssistants, { uid: user?._id });
+            console.log(result);
+            setAssistantList(result as unknown as ASSISTANT[]);
+        } catch (error) {
+            console.error("Error fetching assistants:", error);
+        }
+    };
+
+    return (
+        <div className='p-5 bg-secondary border-r-[1px] h-screen'>
+            <h2 className='font-bold text-lg'>Your Personal AI Assistants</h2>
+
+            <Button className='w-full mt-3'>+ Add New Assistant</Button>
+            <Input className='bg-white mt-3' placeholder='Search' />
+            
+            <div className='mt-5'>
+                {assistantList.map((assistant, index) => (
+                    <div className='p-2 cursor-pointer flex gap-3 items-center hover:bg-gray-200 rounded-xl' key={index}>
+                        <Image 
+                            className="rounded-lg w-[60px] h-[60px] object-cover"  
+                            src={assistant.image} 
+                            alt={assistant.name} 
+                            width={60} 
+                            height={60} 
+                        />
+                        <div>
+                            <h2 className='font-bold'>{assistant.name}</h2>
+                            <h2 className='text-gray-600 dark:text-gray text-sm'>{assistant.title}</h2>
+                        </div>
                     </div>
+                ))}
+            </div>
+
+            <div className='absolute bottom-10 flex gap-3 items-center hover:bg-gray-200 p-2 w-[90%] cursor-pointer rounded-xl'>
+                <Image 
+                    src={user?.picture || '/default-avatar.png'} 
+                    alt='user' 
+                    width={35} 
+                    height={35} 
+                    className='rounded-full' 
+                />
+                <div>
+                    <h2 className='font-bold'>{user?.name}</h2>
+                    <h2 className='text-gray-400 text-sm'>{user?.orderId ? "Pro Plan" : "Free Plan"}</h2>
                 </div>
-            ))}
-        </div>
-        <div className='absolute bottom-10 flex gap-3 items-center hover:bg-gray-200 p-2 w-[90%] cursor-pointer rounded-xl'>
-            <Image src={user?.picture}
-            alt='user' width={35} height={35} className='rounded-full'
-            />
-            <div>
-                <h2 className='font-bold'>{user?.name}</h2>
-                <h2 className='text-gray-400 text-sm'>{user?.orderId?"Pro Plan":"Free Plan"}</h2>
             </div>
         </div>
-    </div>
-  )
+    );
 }
 
-export default AssistantList
+export default AssistantList;
