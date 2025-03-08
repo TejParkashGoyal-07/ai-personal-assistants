@@ -9,7 +9,10 @@ export const CreateUser = mutation({
   },
   handler: async (ctx, args) => {
     // Check if user already exists
-    const existingUser = await ctx.db.query("users").filter(q => q.eq(q.field("email"), args.email)).first();
+    const existingUser = await ctx.db
+      .query("users")
+      .filter(q => q.eq(q.field("email"), args.email))
+      .first();
 
     if (!existingUser) {
       const newUser = {
@@ -19,7 +22,7 @@ export const CreateUser = mutation({
         credits: 5000,
       };
       const userId = await ctx.db.insert("users", newUser);
-      return await ctx.db.get(userId); // ✅ Return full user object
+      return await ctx.db.get(userId); // Return full user object including generated _id
     }
     return existingUser;
   },
@@ -30,22 +33,29 @@ export const GetUser = query({
     email: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.query("users").filter(q => q.eq(q.field("email"), args.email)).first(); // ✅ Use first()
+    return await ctx.db
+      .query("users")
+      .filter(q => q.eq(q.field("email"), args.email))
+      .first(); // Return the first matching user
   },
 });
 
-
-
 export const UpdateTokens = mutation({
   args: {
+    uid: v.id("users"),
     credits: v.number(),
-    uid: v.id('users'),
+    orderId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const result = await ctx.db.patch(args.uid, {
-      credits: args.credits
-    });
-
-    return result;
-  }
+    if (!args.orderId) {
+      return await ctx.db.patch(args.uid, {
+        credits: args.credits,
+      });
+    } else {
+      return await ctx.db.patch(args.uid, {
+        credits: args.credits,
+        orderId: args.orderId,
+      });
+    }
+  },
 });

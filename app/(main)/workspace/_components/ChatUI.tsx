@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { AuthContext } from '@/context/AuthContext';
+import { ASSISTANT } from '../../ai-assistants/page';
 
 type MESSAGE = {
     role: string;
@@ -67,7 +68,7 @@ function ChatUi() {
             credits:user?.credits-tokenCount,
             uid:user?._id
         })
-        setUser(prev=>({
+        setUser((prev:ASSISTANT)=>({
             ...prev,
             credits:user?.credits-tokenCount
         }))
