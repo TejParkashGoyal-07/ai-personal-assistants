@@ -7,6 +7,9 @@ import AiModelOptions from './AiModelOptions';
 import { AssistantContext } from '@/context/AssistantContext';
 import axios from 'axios';
 import Image from 'next/image';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { AuthContext } from '@/context/AuthContext';
 
 type MESSAGE = {
     role: string;
@@ -14,6 +17,8 @@ type MESSAGE = {
 };
 
 function ChatUi() {
+    const UpdateTokens=useMutation(api.users.UpdateTokens)
+    const{user,setUser}=useContext(AuthContext)
     const [input, setInput] = useState<string>("");
     const { assistant } = useContext(AssistantContext);
     const [messages, setMessages] = useState<MESSAGE[]>([]);
@@ -48,12 +53,27 @@ function ChatUi() {
             });
             setMessages(prev=>prev.slice(0,-1))
             setMessages((prev) => [...prev, result.data]);
+            updateUserToken(result.data?.content)
         } catch (error) {
             console.error("Error fetching AI response:", error);
         } finally {
             setLoading(false);
         }
     };
+    const updateUserToken=async(resp:string)=>{
+        const tokenCount=resp&&resp.trim()?resp.trim().split(/\s+/).length:0;
+        console.log(tokenCount)
+        const result=await UpdateTokens({
+            credits:user?.credits-tokenCount,
+            uid:user?._id
+        })
+        setUser(prev=>({
+            ...prev,
+            credits:user?.credits-tokenCount
+        }))
+        console.log(result)
+
+    }
     useEffect(()=>{
         if(chatRef.current){
             chatRef.current.scrollTop=chatRef.current.scrollHeight

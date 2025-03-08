@@ -1,14 +1,16 @@
 'use client';
 import { BlurFade } from '@/components/magicui/blur-fade';
 import { RainbowButton } from '@/components/magicui/rainbow-button';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { AuthContext } from '@/context/AuthContext';
 import { api } from '@/convex/_generated/api';
 import AiAssistantsList from '@/services/AiAssistantsList';
 import { useConvex, useMutation } from 'convex/react';
-import { Loader } from 'lucide-react';
+import { Loader, Loader2Icon } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+
 import React, { useContext, useEffect, useState } from 'react';
 
 export type ASSISTANT = {
@@ -70,7 +72,7 @@ function AIAssistants() {
 
       {/* Button aligned to the right */}
       <div className='flex justify-end mt-4'>
-        <RainbowButton onClick={OnClickContinue} disabled={selectedAssistant.length === 0}>{loading&&<Loader className='animate-spin mr-2'/>}Continue</RainbowButton>
+        <Button onClick={OnClickContinue}>{loading&&<Loader2Icon className='animate-spin mr-2'/>}Continue</Button>
       </div>
 
       <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5'>

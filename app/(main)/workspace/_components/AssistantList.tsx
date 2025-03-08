@@ -10,13 +10,23 @@ import AiAssistantsList from '@/services/AiAssistantsList'
 import Image from 'next/image'
 import { AssistantContext } from '@/context/AssistantContext'
 import AddNewAssistant from './AddNewAssistant'
-
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
+import { LogOut, UserCircle2 } from 'lucide-react'
+import Profile from './Profile'
+  
 function AssistantList() {
     const { user } = useContext(AuthContext);
     const convex = useConvex();
     const [assistantList, setAssistantList] = useState<ASSISTANT[]>([]);
     const { assistant, setAssistant } = useContext(AssistantContext);
-
+    const[openProfile,setOpenProfile]=useState(false)
     useEffect(() => {
         if (user) {
             GetUserAssistants();
@@ -60,7 +70,10 @@ function AssistantList() {
                 ))}
             </div>
 
-            <div className='absolute bottom-10 flex gap-3 items-center hover:bg-gray-200 p-2 w-[90%] cursor-pointer rounded-xl'>
+            
+            <DropdownMenu>
+  <DropdownMenuTrigger asChild>
+  <div className='absolute bottom-10 flex gap-3 items-center hover:bg-gray-200 p-2 w-[90%] cursor-pointer rounded-xl'>
                 <Image 
                     src={user?.picture || '/default-avatar.png'} 
                     alt='user' 
@@ -73,6 +86,18 @@ function AssistantList() {
                     <h2 className='text-gray-400 text-sm'>{user?.orderId ? "Pro Plan" : "Free Plan"}</h2>
                 </div>
             </div>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent className='w-[200px]'>
+    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem onClick={()=>setOpenProfile(true)}><UserCircle2/>Profile</DropdownMenuItem>
+    <DropdownMenuItem> <LogOut/> Logout</DropdownMenuItem>
+    
+   
+  </DropdownMenuContent>
+</DropdownMenu>
+<Profile openDialog={openProfile}/>
+
         </div>
     );
 }
